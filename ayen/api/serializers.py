@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Genre, Country, Artist, Album, Track, Podcast
+from .models import Genre, Country, Artist, Album, Track, Podcast, Lyrics
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -15,12 +15,16 @@ class CountrySerializer(serializers.ModelSerializer):
 
 
 class ArtistSerializer(serializers.ModelSerializer):
+    country = CountrySerializer(read_only=True)
+
     class Meta:
         model = Artist
         fields = '__all__'
 
 
 class AlbumSerializer(serializers.ModelSerializer):
+    artist = ArtistSerializer(read_only=True)  # Embed artist details
+
     class Meta:
         model = Album
         fields = '__all__'
@@ -40,4 +44,10 @@ class TrackSerializer(serializers.ModelSerializer):
 class PodcastSerializer(serializers.ModelSerializer):
     class Meta:
         model = Podcast
+        fields = '__all__'
+
+
+class LyricsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lyrics
         fields = '__all__'

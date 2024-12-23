@@ -1,11 +1,15 @@
-from django.db.models import Q
-from rest_framework import mixins, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import mixins
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import GenericViewSet
-from .models import Genre, Country, Artist, Album, Track, Podcast
+
+from .models import Genre, Country, Artist, Album, Track, Podcast, Lyrics
 from .serializers import (GenreSerializer, CountrySerializer, ArtistSerializer, AlbumSerializer, TrackSerializer,
-                          PodcastSerializer)
+                          PodcastSerializer, LyricsSerializer)
+
+
+class CustomPagination(LimitOffsetPagination):
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 # Genre Views
@@ -32,6 +36,7 @@ class CountryViewSet(
 ):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    pagination_class = CustomPagination
 
 
 # Artist Views
@@ -58,6 +63,7 @@ class AlbumViewSet(
 ):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+    pagination_class = CustomPagination
 
 
 # Track Views
@@ -178,3 +184,27 @@ class PodcastViewSet(
 ):
     queryset = Podcast.objects.all()
     serializer_class = PodcastSerializer
+    pagination_class = CustomPagination
+
+
+# Lyrics Views
+class LyricsViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet
+):
+    queryset = Lyrics.objects.all()
+    serializer_class = LyricsSerializer
+    lookup_field = 'track_id'
+
+    def retrieve(self, request, *args, **kwargs):
+        track_id = kwargs.get(self.lookup_field)
+        try:
+            lyrics = Lyrics.objects.get(track_id=track_id)
+            serializer = self.get_serializer(lyrics)
+            return Response(serializer.data)
+        except Lyrics.DoesNotExist:
+            return Response({"detail": "Lyrics not found."}, status=status.HTTP_404_NOT_FOUND)

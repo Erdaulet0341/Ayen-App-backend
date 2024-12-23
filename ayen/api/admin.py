@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Genre, Country, Artist, Album, Track, Podcast
+from .models import Genre, Country, Artist, Album, Track, Podcast, Lyrics
 
 
 @admin.register(Genre)
@@ -39,6 +39,13 @@ class TrackAdmin(admin.ModelAdmin):
     list_filter = ('release_date', 'genre')
     ordering = ('release_date',)
     filter_horizontal = ('genre',)
+
+
+@admin.register(Lyrics)
+class LyricsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'track', 'created_at')
+    search_fields = ('track__title',)
+    ordering = ('track__title',)
 
 
 @admin.register(Podcast)

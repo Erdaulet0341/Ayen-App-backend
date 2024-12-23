@@ -2,7 +2,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.routers import DefaultRouter
-from api.views import GenreViewSet, CountryViewSet, ArtistViewSet, AlbumViewSet, TrackViewSet, PodcastViewSet
+from api.views import GenreViewSet, CountryViewSet, ArtistViewSet, AlbumViewSet, TrackViewSet, PodcastViewSet, LyricsViewSet
 from django.urls import path, include
 
 
@@ -25,6 +25,7 @@ router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tracks', TrackViewSet, basename='track')
 router.register(r'podcasts', PodcastViewSet, basename='podcast')
+router.register(r'lyrics', LyricsViewSet, basename='lyrics')
 
 urlpatterns = [
     path('', include(router.urls)),

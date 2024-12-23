@@ -52,7 +52,7 @@ class Track(models.Model):
     genre = models.ManyToManyField(Genre, related_name="tracks")
     audio_file = models.FileField(upload_to="tracks/")
     cover_image = models.CharField(max_length=1000, blank=True, null=True)
-    length = models.DurationField()
+    length = models.CharField(max_length=255)
     release_date = models.DateField()
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="tracks")
     play_count = models.IntegerField(default=0)
@@ -61,6 +61,18 @@ class Track(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Lyrics(models.Model):
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name="lyrics")
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.track.title} - Lyric"
+
+    class Meta:
+        verbose_name_plural = "Lyrics"
 
 
 class Podcast(models.Model):
